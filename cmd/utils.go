@@ -26,10 +26,7 @@ func setLog(cmd *cobra.Command) {
 
 	}
 
-	logLevel, err := cmd.Flags().GetString("log_level")
-	if err != nil {
-		log.Fatal(err)
-	}
+	logLevel := viper.GetString("log_level")
 
 	switch logLevel {
 	case "debug":
@@ -41,6 +38,9 @@ func setLog(cmd *cobra.Command) {
 		log.SetLevel(log.WarnLevel)
 	case "error":
 		log.SetLevel(log.ErrorLevel)
+	default:
+		log.Warnf("Unknow log level, use default level info")
+		log.SetLevel(log.InfoLevel)
 	}
 
 }

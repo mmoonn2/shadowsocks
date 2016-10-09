@@ -18,9 +18,9 @@ var RootServerCmd = &cobra.Command{
 	Short: fmt.Sprintf("server for %s service", os.Args[0]),
 	Run: func(cmd *cobra.Command, args []string) {
 		setLog(cmd)
-		fmt.Printf("This is %s binary for %s \n", currentFlag, os.Args[0])
-		fmt.Println("config:", cfgFile)
-		fmt.Println("log_level:", viper.GetString("log_level"))
+		log.Infof("This is %s binary for %s \n", currentFlag, os.Args[0])
+		log.Infoln("config:", cfgFile)
+		log.Infoln("log_level:", viper.GetString("log_level"))
 
 		pm := ss.NewServer(cfgFile)
 		if err := pm.Start(); err != nil {
@@ -58,7 +58,7 @@ func init() {
 
 	RootServerCmd.PersistentFlags().String("bind_addr", "", "Server address for shadowsocks service")
 	RootServerCmd.PersistentFlags().String("bind_port", "", "Server port for shadowsocks service")
-	RootServerCmd.PersistentFlags().String("log_level", "info", "log level")
+	RootServerCmd.PersistentFlags().String("log_level", "", "log level")
 
 	// viper.BindPFlag("config", RootServerCmd.PersistentFlags().Lookup("config"))
 	viper.BindPFlag("bind_addr", RootServerCmd.PersistentFlags().Lookup("bind_addr"))

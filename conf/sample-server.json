@@ -1,6 +1,6 @@
 {
     "log_file": "./log/shadowsocks-server.log",
-    "log_level": "info",
+    "log_level": "debug",
     "log_max_days": 3,
 	"port_password": {
 		"8387": "foobar",

@@ -1,4 +1,5 @@
 {
+	"log_level": "debug",
 	"port_password": {
 		"8387": "foobar",
 		"8388": "barfoo"

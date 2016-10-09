@@ -55,7 +55,7 @@ func init() {
 
 	RootClientCmd.PersistentFlags().String("server_addr", "", "Server address for shadowsocks service")
 	RootClientCmd.PersistentFlags().String("server_port", "", "Server port for shadowsocks service")
-	RootClientCmd.PersistentFlags().String("log_level", "info", "log level")
+	RootClientCmd.PersistentFlags().String("log_level", "", "log level")
 
 	viper.BindPFlag("server_addr", RootClientCmd.PersistentFlags().Lookup("server_addr"))
 	viper.BindPFlag("server_port", RootClientCmd.PersistentFlags().Lookup("server_port"))

@@ -1,11 +1,7 @@
 package main
 
-import (
-	"fmt"
-	"shadowsocks/cmd"
-)
+import "shadowsocks/cmd"
 
 func main() {
-	fmt.Println("Hello World!")
 	cmd.ExecuteServer()
 }

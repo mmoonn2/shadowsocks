@@ -1,4 +1,5 @@
 {
+	"log_level": "debug",
 	"local_port": 1081,
 	"server_password": [
 		["127.0.0.1:8387", "foobar", "aes-128-cfb"],
