@@ -3,7 +3,7 @@
 
 GITCOMMIT=$(git describe --match 'v[0-9]*' --dirty='.m' --always)
 BUILDTIME=$(date -u '+%Y%m%d.%I%M%S%p')
-version=0.0.1
+version=0.0.2
 
 echo "creating shadowsocks binary version $version"
 
