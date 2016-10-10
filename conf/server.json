@@ -1,10 +1,10 @@
 {
 	"log_level": "debug",
-	"port_password": [
-		{"port":"8387", "password":"foobar", "ratelimit":"100k"},
-		{"port":"8388", "password":"barfoo", "ratelimit":"0"},
-		{"port":"8389", "password":"test"}
-	],
+	"port_password": {
+		"8387":{"password":"foobar", "ratelimit":"100k"},
+		"8388":{"password":"barfoo", "ratelimit":"0"},
+		"8389":{"password":"test"}
+	},
 	"method": "aes-128-cfb",
 	"timeout": 600
 }

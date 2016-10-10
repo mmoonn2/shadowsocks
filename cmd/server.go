@@ -18,7 +18,7 @@ var RootServerCmd = &cobra.Command{
 	Short: fmt.Sprintf("server for %s service", os.Args[0]),
 	Run: func(cmd *cobra.Command, args []string) {
 		setLog(cmd)
-		log.Infof("This is %s binary for %s \n", currentFlag, os.Args[0])
+		log.Infof("This is %s binary for %s", currentFlag, os.Args[0])
 		log.Infoln("config:", cfgFile)
 		log.Infoln("log_level:", viper.GetString("log_level"))
 

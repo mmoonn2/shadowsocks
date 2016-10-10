@@ -3,8 +3,9 @@
     "log_level": "debug",
     "log_max_days": 3,
 	"port_password": {
-		"8387": "foobar",
-		"8388": "barfoo"
+		"8387":{"password":"foobar", "ratelimit":"100k"},
+		"8388":{"password":"barfoo", "ratelimit":"0"},
+		"8389":{"password":"test"}
 	},
 	"method": "aes-128-cfb",
 	"timeout": 600

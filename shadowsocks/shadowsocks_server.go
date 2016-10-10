@@ -9,11 +9,14 @@ import (
 	"net"
 	ss "shadowsocks/shadowsocks/shadowsocks"
 	"strconv"
+	"strings"
 	"sync"
 	"sync/atomic"
 	"syscall"
 
 	log "github.com/Sirupsen/logrus"
+	"github.com/docker/go-units"
+	"github.com/juju/ratelimit"
 )
 
 const logCntDelta int64 = 100
@@ -63,8 +66,8 @@ func (pm *passwdManager) Reload() {
 	if err = pm.unifyPortPassword(); err != nil {
 		return
 	}
-	for port, passwd := range pm.config.PortPassword {
-		pm.UpdatePortPasswd(port, passwd, pm.config.Auth)
+	for port, portInfo := range pm.config.PortPassword {
+		pm.UpdatePortPasswd(port, portInfo.Password, pm.config.Auth)
 		if oldconfig.PortPassword != nil {
 			delete(oldconfig.PortPassword, port)
 		}
@@ -105,11 +108,11 @@ func (pm *passwdManager) Run(port, password string, auth bool) {
 			}
 		}
 
-		go pm.handleConnection(ss.NewConn(conn, cipher.Copy()), auth)
+		go pm.handleConnection(ss.NewConn(conn, cipher.Copy()), port, auth)
 	}
 }
 
-func (pm *passwdManager) handleConnection(conn *ss.Conn, auth bool) {
+func (pm *passwdManager) handleConnection(conn *ss.Conn, port string, auth bool) {
 	atomic.AddInt64(&pm.connCnt, 1)
 	if pm.connCnt-nextLogConnCnt >= 0 {
 		log.Warnf("Number of client connections reaches %d\n", nextLogConnCnt)
@@ -155,12 +158,53 @@ func (pm *passwdManager) handleConnection(conn *ss.Conn, auth bool) {
 	}()
 	log.Debugf("piping %s<->%s ota=%v connOta=%v", conn.RemoteAddr(), host, ota, conn.IsOta())
 
-	if ota {
-		go ss.PipeThenCloseOta(conn, remote)
-	} else {
-		go ss.PipeThenClose(conn, remote)
+	var limitHandler = func(size int64) {
+		// Bucket adding size byte every second, holding max size byte
+		bucket := ratelimit.NewBucketWithRate(float64(size), size)
+		src, dst := net.Pipe()
+
+		go func() {
+			if _, err := io.Copy(src, ratelimit.Reader(remote, bucket)); err != nil {
+				log.Errorln("RateLimit src -> remote ======>>> err", err)
+			}
+		}()
+
+		go func() {
+			if _, err := io.Copy(remote, ratelimit.Reader(src, bucket)); err != nil {
+				log.Errorln("RateLimit remote -> src ======>>> err", err)
+			}
+		}()
+		if ota {
+			go ss.PipeThenCloseOta(conn, dst)
+		} else {
+			go ss.PipeThenClose(conn, dst)
+		}
+		ss.PipeThenClose(dst, conn)
 	}
-	ss.PipeThenClose(remote, conn)
+
+	var nolimitHandler = func() {
+		log.Infoln("nolimitHandler ==============>>> ")
+		if ota {
+			go ss.PipeThenCloseOta(conn, remote)
+		} else {
+			go ss.PipeThenClose(conn, remote)
+		}
+		ss.PipeThenClose(remote, conn)
+	}
+
+	portInfo := pm.config.PortPassword[port]
+	log.Infoln("=================>>> port ", port, " portInfo ", portInfo)
+	if portInfo != nil && strings.TrimSpace(portInfo.RateLimit) != "" && strings.TrimSpace(portInfo.RateLimit) != "0" {
+		limit, err := units.RAMInBytes(portInfo.RateLimit)
+		if err != nil {
+			log.Errorf("limit port error:%v", err)
+		} else {
+			limitHandler(limit)
+		}
+	} else {
+		nolimitHandler()
+	}
+
 	closed = true
 	return
 }
@@ -266,8 +310,8 @@ func (pm *passwdManager) Start() (err error) {
 		return
 	}
 
-	for port, password := range pm.config.PortPassword {
-		go pm.Run(port, password, pm.config.Auth)
+	for port, portInfo := range pm.config.PortPassword {
+		go pm.Run(port, portInfo.Password, pm.config.Auth)
 	}
 	return nil
 }
@@ -279,7 +323,9 @@ func (pm *passwdManager) unifyPortPassword() (err error) {
 			return errors.New("not enough options")
 		}
 		port := strconv.Itoa(pm.config.ServerPort)
-		pm.config.PortPassword = map[string]string{port: pm.config.Password}
+		// pm.config.PortPassword = []*ss.PortInfo{&ss.PortInfo{Port: port, Password: pm.config.Password}}
+
+		pm.config.PortPassword = map[string]*ss.PortInfo{port: &ss.PortInfo{Password: pm.config.Password}}
 	} else {
 		if pm.config.Password != "" || pm.config.ServerPort != 0 {
 			log.Warnln("given port_password, ignore server_port and password option")

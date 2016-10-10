@@ -18,6 +18,11 @@ import (
 	"time"
 )
 
+type PortInfo struct {
+	Password  string `json:"password"`
+	RateLimit string `json:"ratelimit,omitempty"`
+}
+
 type Config struct {
 	Server     interface{} `json:"server"`
 	ServerPort int         `json:"server_port"`
@@ -28,8 +33,9 @@ type Config struct {
 	Auth       bool        `json:"auth"`   // one time auth
 
 	// following options are only used by server
-	PortPassword map[string]string `json:"port_password"`
-	Timeout      int               `json:"timeout"`
+	// PortPassword map[string]string `json:"port_password"`
+	PortPassword map[string]*PortInfo `json:"port_password"`
+	Timeout      int                  `json:"timeout"`
 
 	// following options are only used by client
 

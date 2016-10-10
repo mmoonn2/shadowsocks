@@ -8,6 +8,8 @@
 ./shadowsocks-server --config sample-server.json
 ```
 
+send SIGHUP to shadowsocks-server pid to reload config
+
 * Client 
 
 You can use the client binary file as follow:
