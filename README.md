@@ -8,7 +8,7 @@
 ./shadowsocks-server --config sample-server.json
 ```
 
-* Client
+* Client OR use shadowsocks-gui client
 
 edit `sample-client.json` change `127.0.0.1` to specific server IP:
 
