@@ -183,7 +183,6 @@ func (pm *passwdManager) handleConnection(conn *ss.Conn, port string, auth bool)
 	}
 
 	var nolimitHandler = func() {
-		log.Infoln("nolimitHandler ==============>>> ")
 		if ota {
 			go ss.PipeThenCloseOta(conn, remote)
 		} else {
@@ -193,7 +192,6 @@ func (pm *passwdManager) handleConnection(conn *ss.Conn, port string, auth bool)
 	}
 
 	portInfo := pm.config.PortPassword[port]
-	log.Infoln("=================>>> port ", port, " portInfo ", portInfo)
 	if portInfo != nil && strings.TrimSpace(portInfo.RateLimit) != "" && strings.TrimSpace(portInfo.RateLimit) != "0" {
 		limit, err := units.RAMInBytes(portInfo.RateLimit)
 		if err != nil {

@@ -3,7 +3,7 @@
 
 GITCOMMIT=$(git describe --match 'v[0-9]*' --dirty='.m' --always)
 BUILDTIME=$(date -u '+%Y%m%d.%I%M%S%p')
-version=0.0.2
+version=0.0.3
 
 echo "creating shadowsocks binary version $version"
 
@@ -45,16 +45,16 @@ build() {
 }
 
 build darwin amd64 mac64 client
-# build linux amd64 linux64 client
-# build linux 386 linux32 client
-# build windows amd64 win64 client
-# build windows 386 win32 client
+build linux amd64 linux64 client
+build linux 386 linux32 client
+build windows amd64 win64 client
+build windows 386 win32 client
 
-# build darwin amd64 mac64 server
+build darwin amd64 mac64 server
 build linux amd64 linux64 server
-# build linux 386 linux32 server
-# build windows amd64 win64 server
-# build windows 386 win32 server
+build linux 386 linux32 server
+build windows amd64 win64 server
+build windows 386 win32 server
 
 #script/createdeb.sh amd64
 #script/createdeb.sh 386
