@@ -12,7 +12,7 @@ type SignalHandleFunc func()
 // HandleSignal handler close signal
 func HandleSignal(sighupHandler, closeHandler SignalHandleFunc) {
 	c := make(chan os.Signal, 1)
-	signal.Notify(c, syscall.SIGINT, syscall.SIGTERM)
+	signal.Notify(c, syscall.SIGINT, syscall.SIGTERM, syscall.SIGHUP)
 
 	for sig := range c {
 		switch sig {
