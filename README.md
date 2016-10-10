@@ -35,6 +35,6 @@ then change the socket v5 proxy on your conputer network setting to 127.0.0.1:10
 
 **OR use shadowsocks-gui client**
 
-shadowsocks-gui for mac
-[ShadowsocksX-2.6.3.dmg](https://github.com/shadowsocks/shadowsocks-iOS/releases/download/2.6.3/ShadowsocksX-2.6.3.dmg)
-[ShadowsocksX-NG-1.2.dmg](https://github.com/shadowsocks/ShadowsocksX-NG/releases/download/1.2/ShadowsocksX-NG-1.2.dmg)
+shadowsocks-gui for mac    
+[ShadowsocksX-2.6.3.dmg](https://github.com/shadowsocks/shadowsocks-iOS/releases/download/2.6.3/ShadowsocksX-2.6.3.dmg)    
+[ShadowsocksX-NG-1.2.dmg](https://github.com/shadowsocks/ShadowsocksX-NG/releases/download/1.2/ShadowsocksX-NG-1.2.dmg)    
